@@ -1,0 +1,2 @@
+../src/clkconfig.c:24:6:WDT_CLK_Setup	16	static
+../src/clkconfig.c:49:6:CLKOUT_Setup	16	static
