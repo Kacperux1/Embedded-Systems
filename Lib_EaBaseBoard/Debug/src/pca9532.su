@@ -1,0 +1,11 @@
+../src/pca9532.c:48:13:setLsStates	24	static
+../src/pca9532.c:65:13:setLeds	24	static
+../src/pca9532.c:96:6:pca9532_init	4	static
+../src/pca9532.c:120:10:pca9532_getLedState	24	static
+../src/pca9532.c:167:6:pca9532_setLeds	16	static
+../src/pca9532.c:192:6:pca9532_setBlink0Period	24	static
+../src/pca9532.c:211:6:pca9532_setBlink0Duty	24	static
+../src/pca9532.c:236:6:pca9532_setBlink0Leds	16	static
+../src/pca9532.c:252:6:pca9532_setBlink1Period	24	static
+../src/pca9532.c:271:6:pca9532_setBlink1Duty	24	static
+../src/pca9532.c:297:6:pca9532_setBlink1Leds	16	static

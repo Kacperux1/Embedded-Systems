@@ -1,0 +1,2 @@
+../src/led7seg.c:86:6:led7seg_init	8	static
+../src/led7seg.c:105:6:led7seg_setChar	24	static

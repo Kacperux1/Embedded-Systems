@@ -1,0 +1,14 @@
+../src/light.c:78:16:readCommandReg	16	static
+../src/light.c:90:16:readControlReg	16	static
+../src/light.c:111:6:light_init	4	static
+../src/light.c:122:6:light_enable	16	static
+../src/light.c:142:10:light_read	16	static
+../src/light.c:175:6:light_setMode	24	static
+../src/light.c:199:6:light_setWidth	24	static
+../src/light.c:238:6:light_setRange	24	static
+../src/light.c:277:6:light_setHiThreshold	24	static
+../src/light.c:298:6:light_setLoThreshold	24	static
+../src/light.c:321:6:light_setIrqInCycles	24	static
+../src/light.c:345:9:light_getIrqStatus	16	static
+../src/light.c:358:6:light_clearIrqStatus	16	static
+../src/light.c:378:6:light_shutdown	16	static

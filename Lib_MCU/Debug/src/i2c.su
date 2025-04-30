@@ -1,0 +1,8 @@
+C:\Users\251497\Documents\Lib_CMSISv1p30_LPC13xx\inc/core_cm3.h:1502:22:NVIC_EnableIRQ	16	static
+../src/i2c.c:49:6:I2C_IRQHandler	16	static
+../src/i2c.c:166:10:I2CStart	16	static
+../src/i2c.c:202:10:I2CStop	4	static
+../src/i2c.c:222:10:I2CInit	16	static
+../src/i2c.c:283:10:I2CEngine	8	static
+../src/i2c.c:305:6:I2CRead	24	static
+../src/i2c.c:317:6:I2CWrite	24	static

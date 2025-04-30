@@ -1,0 +1,7 @@
+C:\Users\251497\Documents\Lib_CMSISv1p30_LPC13xx\inc/core_cm3.h:1502:22:NVIC_EnableIRQ	16	static
+../src/timer32.c:37:6:delay32Ms	16	static
+../src/timer32.c:68:6:delay32Us	16	static
+../src/timer32.c:145:6:enable_timer32	16	static
+../src/timer32.c:167:6:disable_timer32	16	static
+../src/timer32.c:189:6:reset_timer32	24	static
+../src/timer32.c:218:6:init_timer32	16	static

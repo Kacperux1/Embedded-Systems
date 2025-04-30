@@ -1,5 +1,0 @@
-C:\Users\251586\Downloads\lpc1343_xpr_bb_140609\Lib_CMSISv1p30_LPC13xx\inc/core_cm3.h:1502:22:NVIC_EnableIRQ	16	static
-../src/ssp.c:34:6:SSP_IRQHandler	16	static
-../src/ssp.c:70:6:SSPInit	16	static
-../src/ssp.c:158:6:SSPSend	24	static
-../src/ssp.c:192:6:SSPReceive	24	static

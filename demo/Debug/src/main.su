@@ -1,0 +1,12 @@
+../src/main.c:32:13:moveBar	24	static
+../src/main.c:50:13:change7Seg	16	static
+../src/main.c:72:13:drawOled	16	static
+../src/main.c:166:13:intToString	32	static
+../src/main.c:219:13:playNote	24	static
+../src/main.c:241:17:getNote	16	static
+../src/main.c:251:13:playNoteForHold	16	static
+../src/main.c:259:17:getDuration	16	static
+../src/main.c:269:17:getPause	16	static
+../src/main.c:285:13:playSong	32	static
+../src/main.c:315:13:printOnScreen	32	static
+../src/main.c:326:5:main	64	static

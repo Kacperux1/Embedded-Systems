@@ -1,0 +1,11 @@
+../src/cr_startup_lpc13.c:248:1:ResetISR	16	static
+../src/cr_startup_lpc13.c:305:6:NMI_Handler	4	static
+../src/cr_startup_lpc13.c:310:6:HardFault_Handler	4	static
+../src/cr_startup_lpc13.c:315:6:MemManage_Handler	4	static
+../src/cr_startup_lpc13.c:320:6:BusFault_Handler	4	static
+../src/cr_startup_lpc13.c:325:6:UsageFault_Handler	4	static
+../src/cr_startup_lpc13.c:330:6:SVCall_Handler	4	static
+../src/cr_startup_lpc13.c:335:6:DebugMon_Handler	4	static
+../src/cr_startup_lpc13.c:340:6:PendSV_Handler	4	static
+../src/cr_startup_lpc13.c:345:6:SysTick_Handler	4	static
+../src/cr_startup_lpc13.c:357:6:IntDefaultHandler	4	static

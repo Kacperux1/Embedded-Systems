@@ -1,0 +1,10 @@
+../src/flash.c:99:13:exitDeepPowerDown	16	static
+../src/flash.c:109:13:readDeviceId	24	static
+../src/flash.c:121:16:readStatus	16	static
+../src/flash.c:137:13:pollIsBusy	16	static
+../src/flash.c:151:13:setAddressBytes	24	static
+../src/flash.c:187:10:flash_init	32	static
+../src/flash.c:244:10:flash_write	40	static
+../src/flash.c:306:10:flash_read	32	static
+../src/flash.c:342:10:flash_getPageSize	4	static
+../src/flash.c:356:6:flash_setToBinaryPageSize	16	static

@@ -1,0 +1,7 @@
+../src/acc.c:77:16:getStatus	16	static
+../src/acc.c:88:16:getModeControl	16	static
+../src/acc.c:99:13:setModeControl	24	static
+../src/acc.c:122:6:acc_init	8	static
+../src/acc.c:143:6:acc_read	32	static
+../src/acc.c:182:6:acc_setRange	24	static
+../src/acc.c:203:6:acc_setMode	24	static

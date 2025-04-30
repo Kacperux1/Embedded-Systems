@@ -1,0 +1,5 @@
+C:\Users\251497\Documents\Lib_CMSISv1p30_LPC13xx\inc/core_cm3.h:1515:22:NVIC_DisableIRQ	16	static
+../src/uart.c:111:6:UARTInit	24	static
+../src/uart.c:171:6:UARTSend	16	static
+../src/uart.c:199:6:UARTSendString	16	static
+../src/uart.c:228:10:UARTReceive	32	static

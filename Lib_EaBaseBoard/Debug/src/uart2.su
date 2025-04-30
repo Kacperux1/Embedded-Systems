@@ -1,0 +1,9 @@
+../src/uart2.c:65:13:writeReg	24	static
+../src/uart2.c:74:16:readReg	24	static
+../src/uart2.c:101:6:uart2_init	16	static
+../src/uart2.c:123:6:uart2_setBaudRate	24	static
+../src/uart2.c:159:6:uart2_send	16	static
+../src/uart2.c:188:6:uart2_sendString	16	static
+../src/uart2.c:218:10:uart2_receive	40	static
+../src/uart2.c:254:9:uart2_getModemStatus	8	static
+../src/uart2.c:259:6:uart2_setModemStatus	16	static

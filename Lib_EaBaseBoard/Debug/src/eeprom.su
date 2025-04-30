@@ -1,0 +1,4 @@
+../src/eeprom.c:56:13:eepromDelay	16	static
+../src/eeprom.c:73:6:eeprom_init	4	static
+../src/eeprom.c:92:9:eeprom_read	24	static
+../src/eeprom.c:128:9:eeprom_write	48	static
