@@ -46,70 +46,6 @@
      pca9532_setLeds(ledOn, 0xffff);
  }
 
- static uint8_t ch7seg = '0';
- static void change7Seg(uint8_t rotaryDir)
- {
-
-     if (rotaryDir != ROTARY_WAIT) {
-
-         if (rotaryDir == ROTARY_RIGHT) {
-             ch7seg++;
-         }
-         else {
-             ch7seg--;
-         }
-
-         if (ch7seg > '9')
-             ch7seg = '0';
-         else if (ch7seg < '0')
-             ch7seg = '9';
-
-         led7seg_setChar(ch7seg, FALSE);
-
-     }
- }
-
- static void drawOled(uint8_t joyState)
- {
-     static int wait = 0;
-     static uint8_t currX = 48;
-     static uint8_t currY = 32;
-     static uint8_t lastX = 0;
-     static uint8_t lastY = 0;
-
-     if ((joyState & JOYSTICK_CENTER) != 0) {
-         oled_clearScreen(OLED_COLOR_BLACK);
-         return;
-     }
-
-     if (wait++ < 3)
-         return;
-
-     wait = 0;
-
-     if ((joyState & JOYSTICK_UP) != 0 && currY > 0) {
-         currY--;
-     }
-
-     if ((joyState & JOYSTICK_DOWN) != 0 && currY < OLED_DISPLAY_HEIGHT-1) {
-         currY++;
-     }
-
-     if ((joyState & JOYSTICK_RIGHT) != 0 && currX < OLED_DISPLAY_WIDTH-1) {
-         currX++;
-     }
-
-     if ((joyState & JOYSTICK_LEFT) != 0 && currX > 0) {
-         currX--;
-     }
-
-     if (lastX != currX || lastY != currY) {
-         oled_putPixel(currX, currY, OLED_COLOR_WHITE);
-         lastX = currX;
-         lastY = currY;
-     }
- }
-
  #define P1_2_HIGH() (LPC_GPIO1->DATA |= (0x1<<2))
  #define P1_2_LOW()  (LPC_GPIO1->DATA &= ~(0x1<<2))
 
@@ -271,20 +207,17 @@
      return (ch - '0') * 200;
  }
 
- static uint32_t getPause(uint8_t ch)
- {
-     switch (ch) {
-     case '+':
-         return 0;
-     case ',':
-         return 5;
-     case '.':
-         return 20;
-     case '_':
-         return 30;
-     default:
-         return 5;
-     }
+ static void ledLineSet(int hold){
+	 // 11111111 przesuniete o maks ledow - hold
+	 if (hold * 3 < 8){
+		 pca9532_setLeds(255 >> (8 - hold * 3), 0xffff);
+	 } else {
+		 pca9532_setLeds(255, 0xffff);
+	 }
+
+	 if (hold > 2) {
+		 pca9532_setLeds(255 << 8, 0);
+	 }
  }
 
  static void playSong(uint8_t *song) {
@@ -333,33 +266,20 @@ int main (void) {
      int8_t y = 0;
      int8_t z = 0;
      uint8_t dir = 1;
-     uint8_t wait = 0;
-
-     uint8_t state = 0;
-
-     uint32_t trim = 0;
 
      uint8_t btn1 = 0;
-     uint8_t btn2 = 0;
 
      GPIOInit();
+     // init do 3-color leda
      GPIOSetDir( PORT1, 9, 1 );
      GPIOSetDir( PORT1, 10, 1 );
- //    init_timer16(0, 10);
-     LPC_SYSCON->SYSAHBCLKCTRL |= (1<<7); // tak wlaczac timer, to jest dla 16-bitowego timera nr 0
- //    init_timer32(1, 1000);
-     LPC_SYSCON->SYSAHBCLKCTRL |= (1<<10); // timer 32 bit nr 1
-     LPC_SYSCON->SYSAHBCLKCTRL |= (1<<9);
 
-     UARTInit(115200);
-     UARTSendString((uint8_t*)"Demo\r\n");
+     LPC_SYSCON->SYSAHBCLKCTRL |= (1<<10); // init timer 32 bit nr 1
+     LPC_SYSCON->SYSAHBCLKCTRL |= (1<<9);
 
      I2CInit( (uint32_t)I2CMASTER, 0 );
      SSPInit();
      ADCInit( ADC_CLK );
-
-     rotary_init();
-     led7seg_init();
 
      pca9532_init();
      joystick_init();
@@ -404,7 +324,8 @@ int main (void) {
      int hold = 0;
      int print = 0;
 
-     LPC_TMR16B0->TCR = 1;
+//     LPC_TMR16B0->TCR = 1;
+     int adc_value = (((ADCRead(0) - 38) * 10) / 49) + 50;
 
      while (1) {
 
@@ -423,6 +344,7 @@ int main (void) {
      		for(int i=0; i<10; i++){
      			code[i]=0;
      		}
+     		number = 0;
      	}
 
 
@@ -445,13 +367,6 @@ int main (void) {
          	rgb_setLeds(7);
 
          	if(print){
-         		LPC_TMR16B0->TCR = 0;
-
-         		int time = LPC_TMR16B0->TC;
-         		intToString(time, buf, 10, 10);
-         		oled_putString(1, 50, buf, OLED_COLOR_WHITE, OLED_COLOR_BLACK);
-
-         		LPC_TMR16B0->TCR = 2;
 
          		if(hold > 2) {
          		 	oled_putString(colCode, row,  (uint8_t*)"-", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
@@ -463,7 +378,6 @@ int main (void) {
          		 }
 
  				playNoteForHold(hold);
- 				LPC_TMR16B0->TCR = 1;
 
  				colCode = colCode + 7;
  				 if (colCode > 90){
@@ -475,7 +389,6 @@ int main (void) {
  						 oled_clearScreen(OLED_COLOR_BLACK);
  					 }
  				 }
-
  				hold = 0;
  				print = 0;
  			}
@@ -521,8 +434,16 @@ int main (void) {
          }
 
 
+         // na podstawie potencjometru zmien predkosc delayu miedzy iteracjami
+         adc_value = (((ADCRead(0) - 30) * 10) / 49) + 50;
 
-         delay32Ms(1, 170);
+         oled_putString(1, 50, "    ", OLED_COLOR_BLACK, OLED_COLOR_BLACK);
+         intToString(adc_value, buf, 10, 10);
+         oled_putString(1, 50, buf, OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+
+         ledLineSet(hold);
+
+         delay32Ms(1, adc_value);
 
      }
  }
