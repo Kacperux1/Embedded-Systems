@@ -1,0 +1,95 @@
+main.c:295:13: style: misra violation [misra-c2012-2.2]
+    xoff = 0 - x;
+    // [R2.2] Zmienna może być zbędna (kod niepotrzebny, martwy kod)
+
+main.c:296:13: style: misra violation [misra-c2012-2.2]
+    yoff = 0 - y;
+    // [R2.2] Zmienna może być zbędna (kod niepotrzebny, martwy kod)
+
+main.c:99:4: style: misra violation [misra-c2012-7.4]
+    "abcdefghijklmnoprstuwxyz"
+    // [R7.4] Niewłaściwe użycie literałów znakowych – brak 'q' i 'v' może być błędem
+
+main.c:98:7: style: misra violation [misra-c2012-8.4]
+    char morseTranslationTable[] = {
+    // [R8.4] Zmienna nie jest oznaczona jako `static`, a może być ograniczona do tego pliku
+
+main.c:28:17: style: misra violation [misra-c2012-8.9]
+    static uint8_t barPos = 2;
+    // [R8.9] Zmienna globalna – użyj `const` lub ogranicz zakres, jeśli możliwe
+
+main.c:70:22: style: misra violation [misra-c2012-8.9]
+    static unsigned int morseCodeTable[] = {
+    // [R8.9] Zmienna globalna – rozważ ograniczenie zasięgu
+
+main.c:29:17: style: misra violation [misra-c2012-8.9]
+    static uint8_t buf[20];
+    // [R8.9] Zmienna globalna – możliwe naruszenie hermetyzacji danych
+
+main.c:37:21: style: misra violation [misra-c2012-10.1]
+    ledOn = (1 << 0) | (3 << 14);
+    // [R10.1] Operacje bitowe na wartościach liczbowych – typy muszą być zgodne
+
+main.c:41:23: style: misra violation [misra-c2012-10.1]
+    ledOn = 0x07 << (barPos - 2);
+    // [R10.1] Możliwa zmiana typu przez przesunięcie bitowe
+
+main.c:334:9: style: misra violation [misra-c2012-10.3]
+    x = x + xoff;
+    // [R10.3] Niejawna konwersja typów może powodować błędy
+
+main.c:36:17: style: misra violation [misra-c2012-10.4]
+    if (barPos == 0)
+    // [R10.4] Warunek logiczny używa zmiennej o typie innym niż bool – należy jawnie konwertować
+
+main.c:115:30: style: misra violation [misra-c2012-10.4]
+    if (pBuf == NULL || len < 2)
+    // [R10.4] Warunek logiczny – brak jawnej konwersji na `bool`
+
+main.c:297:11: style: misra violation [misra-c2012-10.6]
+    zoff = 64 - z;
+    // [R10.6] Nieprawidłowe użycie typów przy odejmowaniu – możliwa utrata danych
+
+main.c:421:41: style: misra violation [misra-c2012-11.4]
+    oled_putChar(colChar, 40, (uint8_t*)morseTranslationTable[j], ...);
+    // [R11.4] Rzutowanie wskaźnika – powinno być bezpieczne i sprawdzone
+
+main.c:249:26: style: misra violation [misra-c2012-11.8]
+    static uint8_t * song = (uint8_t*)"C2.C2,D4,C4,F4,E8,";
+    // [R11.8] Rzutowanie ze stringa do `uint8_t*` – niezgodność typów
+
+main.c:212:16: style: misra violation [misra-c2012-12.1]
+    if (hold * 3 < 8) {
+    // [R12.1] Złożony wyrażenie warunkowe – możliwa konieczność nawiasów
+
+main.c:133:22: style: misra violation [misra-c2012-13.3]
+    pBuf[pos++] = '-';
+    // [R13.3] Efekty uboczne w wyrażeniu – trudne do testowania/debugowania
+
+main.c:235:27: style: misra violation [misra-c2012-15.4]
+    while (*song != '\0') {
+    // [R15.4] Pętla bez jawnego limitu – możliwa nieskończona pętla
+
+main.c:117:10: style: misra violation [misra-c2012-15.5]
+    return;
+    // [R15.5] Wychodzenie z funkcji poza końcem – preferowana jedna ścieżka wyjścia
+
+main.c:40:6: style: misra violation [misra-c2012-15.6]
+    else
+    // [R15.6] Brak nawiasów przy `else` – nieczytelna struktura sterowania
+
+main.c:132:19: style: misra violation [misra-c2012-17.8]
+    value = -value;
+    // [R17.8] Operacja modyfikująca zmienną – potencjalna nieprzewidywalność, lepiej przypisać do nowej
+
+main.c:153:16: style: misra violation [misra-c2012-17.8]
+    value /= base;
+    // [R17.8] Operacja destrukcyjna – preferowane jest przekształcenie bez zmiany oryginału
+
+main.c:369:13: style: misra violation [misra-c2012-14.4]
+    if (print) {
+    // [R14.4] Warunek logiczny bez jawnego typu bool – możliwa niejednoznaczność
+
+main.c:338:18: style: misra violation [misra-c2012-12.1]
+    if (x > 20 || x < -20 || y > 20 || y < -20)
+    // [R12.1] Wielokrotne warunki logiczne bez nawiasów – preferowane do zwiększenia czytelności
