@@ -93,3 +93,4 @@ main.c:369:13: style: misra violation [misra-c2012-14.4]
 main.c:338:18: style: misra violation [misra-c2012-12.1]
     if (x > 20 || x < -20 || y > 20 || y < -20)
     // [R12.1] Wielokrotne warunki logiczne bez nawiasów – preferowane do zwiększenia czytelności
+..
