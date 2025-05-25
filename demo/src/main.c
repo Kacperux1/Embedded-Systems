@@ -22,8 +22,6 @@
  #include "rgb.h"
 
 
- static uint8_t barPos = 2;
-
  // Okresla jakie napiecie bedzie na pinie P1.2 (PWM filter) aby skorzystac z glosnika
  #define P1_2_HIGH() (LPC_GPIO1->DATA |= (0x1<<2))
  #define P1_2_LOW()  (LPC_GPIO1->DATA &= ~(0x1<<2))
