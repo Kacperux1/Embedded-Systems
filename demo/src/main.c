@@ -2,7 +2,7 @@
   *   Prosty tlumacz alfabetu Morse'a
   *
   *   Grupa A10:
-  *   Lech Czochra [251497], Jedrzej Bartoszewski , Kacper Maziarz
+  *   Lech Czochra [251497], Jedrzej Bartoszewski [251482] , Kacper Maziarz [251586]
   *
   ******************************************************************************/
 
@@ -28,6 +28,7 @@
  #define JOYSTICK_DOWN 0x04
  #define JOYSTICK_RIGHT 0x10
 
+//Odwzorowanie ciagow sygnalow na poszczegolne litery
  static unsigned int morseCodeTable[] = {
         // 1*, 2-
         12, //*-		a
@@ -58,6 +59,18 @@
 
  static const char morseTranslationTable[] = "abcdefghijklmnoprstuwxyz";
 
+/**
+* @brief Generuje sygnał dźwiękowy o zadanej częstotliwosci na pinie 1_2 dla brzęczyka.
+*
+* @param note       Czestotliwość dźwięku w Hz .
+* @param durationMs Czas trwania dźwięku w milisekundach.
+*
+* @return Brak (zwracany typ void).
+*
+* @side effects:
+*         Funkcja uzywa pinu współdzielonego z diodą RGB (P1.2).
+ *
+*/
  static void playNote(uint32_t note, uint32_t durationMs) {
 
      uint32_t t = 0;
@@ -80,6 +93,17 @@
      }
  }
 
+/**
+ * @brief Odtwarza dźwięk w zależności od długości przytrzymania przycisku.
+ *
+ * @param hold Liczba oznaczająca długość przytrzymania (liczba iteracji,
+ * przez ktore trzymany jest przycisk).
+ *
+ *@return Brak (zwracany typ void)
+ * @note Długość dźwięku to zawsze 200 ms.
+ * @side effects: brak
+ */
+
  static void playNoteForHold(int hold) {
     if (hold > 3) {
         // nuta A, 440 Hz, 200 ms trwania
@@ -90,6 +114,17 @@
     }
  }
 
+/**
+* @brief Ustawia diody LED w zależności od długości przytrzymania.
+*
+* @param hold Liczba oznaczająca długość przytrzymania.
+*             - Każde 3 jednostki aktywują kolejną diodę (maksymalnie 8).
+*             - Dla hold > 2, włącza dodatkowe diody w drugiej części LED-ów (bit 8 i dalej).
+*
+* @return Brak (zwracany typ void)
+*
+* @side effects: brak
+*/
  static void ledLineSet(int hold){
      // 11111111 przesuniete o maks ledow - hold
      if ((hold * 3) < 8){
