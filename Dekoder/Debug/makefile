@@ -52,7 +52,7 @@ clean:
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size demo.axf; # arm-none-eabi-objcopy -O ihex demo.axf demo.hex ;
+	-arm-none-eabi-size demo.axf; # arm-none-eabi-objcopy -O ihex Dekoder.axf Dekoder.hex ;
 	-@echo ' '
 
 .PHONY: all clean dependents main-build post-build
