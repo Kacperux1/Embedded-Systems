@@ -25,39 +25,7 @@
 // Okresla jakie napiecie bedzie na pinie P1.2 (PWM filter) aby skorzystac z glosnika
 #define P1_2_HIGH() (LPC_GPIO1->DATA |= (1U<<2))
 #define P1_2_LOW()  (LPC_GPIO1->DATA &= ~(1U<<2))
-#define JOYSTICK_DOWN 0x04u
-#define JOYSTICK_RIGHT 0x10u
 
-//Odwzorowanie ciagow sygnalow na poszczegolne litery
-static uint32_t morseCodeTable[] = {
-        // 1*, 2-
-        12, //*-		a
-        2111, //-***	b
-        2121, //-*-*	c
-        211, //-**		d
-        1, //*			e
-        1121, //**-*	f
-        221, //--*		g
-        1111, //****	h
-        11, //**		i
-        1222, //*---	j
-        212, //-*-		k
-        1211, //*-**	l
-        22, //--		m
-        21, //-*		n
-        222, //---		o
-        1221, //*--*	p
-        121, //*-*		r
-        111, //***		s
-        2, //-			t
-        112, //**-		u
-        122, //*--		w
-        2112, //-**-	x
-        2122, //-*--	y
-        2211 //--**		z
-};
-
-static const char morseTranslationTable[] = "abcdefghijklmnoprstuwxyz";
 
 /**
 * @brief Generuje sygnał dźwiękowy o zadanej częstotliwosci na pinie 1_2 dla brzęczyka.
@@ -128,7 +96,7 @@ static void playNoteForHold(uint32_t hold) {
 static void ledLineSet(uint32_t hold){
     // 11111111 przesuniete o maks ledow - hold
     if ((hold * 3u) < 8u){
-        pca9532_setLeds(255U >> (sss8U - (hold * 3U)), 0xffff);
+        pca9532_setLeds(255U >> (8U - (hold * 3U)), 0xffff);
     } else {
         pca9532_setLeds(255, 0xffff);
     }
@@ -142,6 +110,38 @@ static void ledLineSet(uint32_t hold){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main (void) {
+
+	//Odwzorowanie ciagow sygnalow na poszczegolne litery
+	static uint32_t morseCodeTable[] = {
+	        // 1*, 2-
+	        12, //*-		a
+	        2111, //-***	b
+	        2121, //-*-*	c
+	        211, //-**		d
+	        1, //*			e
+	        1121, //**-*	f
+	        221, //--*		g
+	        1111, //****	h
+	        11, //**		i
+	        1222, //*---	j
+	        212, //-*-		k
+	        1211, //*-**	l
+	        22, //--		m
+	        21, //-*		n
+	        222, //---		o
+	        1221, //*--*	p
+	        121, //*-*		r
+	        111, //***		s
+	        2, //-			t
+	        112, //**-		u
+	        122, //*--		w
+	        2112, //-**-	x
+	        2122, //-*--	y
+	        2211 //--**		z
+	};
+
+	static const char morseTranslationTable[] = "abcdefghijklmnoprstuwxyz";
+
     uint8_t joy = 0;
     unsigned int code[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     int number = 0;
@@ -263,11 +263,11 @@ int main (void) {
             if(print > 0){
 
                 if(hold > 2u) {
-                    oled_putString(colCode, row,  (const uint8_t*)"-", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+                    oled_putString(colCode, row,  (uint8_t*)"-", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
                     code[number] = (code[number] * 10u) + 2u;
                 }
                 else{
-                    oled_putString(colCode, row,  (const uint8_t*)"*", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+                    oled_putString(colCode, row,  (uint8_t*)"*", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
                     code[number] = (code[number] * 10u) + 1u;
                 }
 
@@ -290,7 +290,7 @@ int main (void) {
 
 
         if(code[number]>223u) {
-            oled_putString(colCode, row,  (const uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+            oled_putString(colCode, row,  (uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
             colCode = colCode + 7;
             if(colCode > 90){
                 row = row+15;
@@ -312,7 +312,7 @@ int main (void) {
             for(int i=0; i<=number; i++){
                 for(int j=0; j<24; j++){	//24 to liczba elementów w tabelce morseCodeTable bo nie wiem czy jest tutaj fukcja length albo coś takiego
                     if(code[i]==morseCodeTable[j]){
-                        oled_putChar(colChar, 40, (const uint8_t)morseTranslationTable[j], OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+                        oled_putChar(colChar, 40, (uint8_t)morseTranslationTable[j], OLED_COLOR_WHITE, OLED_COLOR_BLACK);
                         break;
                     }
                 }
@@ -322,7 +322,7 @@ int main (void) {
         }
 
         if ((joy & JOYSTICK_RIGHT) != 0u) {
-            oled_putString(colCode, row,  (const uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+            oled_putString(colCode, row,  (uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
             number ++;
             colCode = colCode+7;
         }
