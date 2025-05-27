@@ -27,7 +27,7 @@
 
 
 /**
-* @brief Generuje sygnał dźwiękowy o zadanej częstotliwosci na pinie 1_2 dla glosnika.
+* @brief Generuje sygnał dźwiękowy o zadanym okresie drgań na pinie 1_2 dla glosnika.
 *
 * @param note       Czestotliwość dźwięku w Hz .
 * @param durationMs Czas trwania dźwięku w milisekundach.
@@ -109,9 +109,8 @@ static void ledLineSet(uint32_t hold){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main (void) {
-
-	//Odwzorowanie ciagow sygnalow na poszczegolne litery
-	static uint32_t morseCodeTable[] = {
+     //Odwzorowanie ciagow sygnalow na poszczegolne litery
+     uint32_t morseCodeTable[] = {
 	        // 1*, 2-
 	        12, //*-		a
 	        2111, //-***	b
@@ -139,7 +138,7 @@ int main (void) {
 	        2211 //--**		z
 	};
 
-	static const char morseTranslationTable[] = "abcdefghijklmnoprstuwxyz";
+    const char morseTranslationTable[] = "abcdefghijklmnoprstuwxyz";
 
     uint8_t joy = 0;
     unsigned int code[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
