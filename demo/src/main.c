@@ -192,7 +192,7 @@ int main (void) {
     zoff = 64-z;
 
 
-    /* ---- Speaker ------> */
+    /* ----inicjalizacja glosnika------> */
 
     GPIOSetDir( PORT3, 0, 1 );
     GPIOSetDir( PORT3, 1, 1 );
@@ -205,7 +205,7 @@ int main (void) {
     GPIOSetValue( PORT3, 1, 0 );  //LM4811-up/dn
     GPIOSetValue( PORT3, 2, 0 );  //LM4811-shutdn
 
-    /* <---- Speaker ------ */
+    /* <---- Inicjalizacja glosnika ------ */
 
     GPIOSetDir(PORT0, 1, 0);
     LPC_IOCON->PIO0_1 &= ~0x7;
