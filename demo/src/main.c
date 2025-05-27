@@ -9,7 +9,6 @@
 
 #include "mcu_regs.h"
 #include "type.h"
-#include "stdio.h"
 #include "timer32.h"
 #include "gpio.h"
 #include "i2c.h"
@@ -28,7 +27,7 @@
 
 
 /**
-* @brief Generuje sygnał dźwiękowy o zadanej częstotliwosci na pinie 1_2 dla brzęczyka.
+* @brief Generuje sygnał dźwiękowy o zadanej częstotliwosci na pinie 1_2 dla glosnika.
 *
 * @param note       Czestotliwość dźwięku w Hz .
 * @param durationMs Czas trwania dźwięku w milisekundach.
