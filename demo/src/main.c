@@ -7,29 +7,29 @@
   ******************************************************************************/
 
 
- #include "mcu_regs.h"
- #include "type.h"
- #include "stdio.h"
- #include "timer32.h"
- #include "gpio.h"
- #include "i2c.h"
- #include "ssp.h"
- #include "adc.h"
- #include "joystick.h"
- #include "pca9532.h"
- #include "acc.h"
- #include "oled.h"
- #include "rgb.h"
+#include "mcu_regs.h"
+#include "type.h"
+#include "stdio.h"
+#include "timer32.h"
+#include "gpio.h"
+#include "i2c.h"
+#include "ssp.h"
+#include "adc.h"
+#include "joystick.h"
+#include "pca9532.h"
+#include "acc.h"
+#include "oled.h"
+#include "rgb.h"
 
 
- // Okresla jakie napiecie bedzie na pinie P1.2 (PWM filter) aby skorzystac z glosnika
- #define P1_2_HIGH() (LPC_GPIO1->DATA |= (1U<<2))
- #define P1_2_LOW()  (LPC_GPIO1->DATA &= ~(1U<<2))
- #define JOYSTICK_DOWN 0x04
- #define JOYSTICK_RIGHT 0x10
+// Okresla jakie napiecie bedzie na pinie P1.2 (PWM filter) aby skorzystac z glosnika
+#define P1_2_HIGH() (LPC_GPIO1->DATA |= (1U<<2))
+#define P1_2_LOW()  (LPC_GPIO1->DATA &= ~(1U<<2))
+#define JOYSTICK_DOWN 0x04u
+#define JOYSTICK_RIGHT 0x10u
 
 //Odwzorowanie ciagow sygnalow na poszczegolne litery
- static unsigned int morseCodeTable[] = {
+static uint32_t morseCodeTable[] = {
         // 1*, 2-
         12, //*-		a
         2111, //-***	b
@@ -55,9 +55,9 @@
         2112, //-**-	x
         2122, //-*--	y
         2211 //--**		z
- };
+};
 
- static const char morseTranslationTable[] = "abcdefghijklmnoprstuwxyz";
+static const char morseTranslationTable[] = "abcdefghijklmnoprstuwxyz";
 
 /**
 * @brief Generuje sygnał dźwiękowy o zadanej częstotliwosci na pinie 1_2 dla brzęczyka.
@@ -71,27 +71,27 @@
 *         Funkcja uzywa pinu współdzielonego z diodą RGB (P1.2).
  *
 */
- static void playNote(uint32_t note, uint32_t durationMs) {
+static void playNote(uint32_t note, uint32_t durationMs) {
 
-     uint32_t t = 0;
+    uint32_t t = 0;
 
-     if (note > (uint32_t) 0) {
+    if (note > (uint32_t) 0) {
 
-         while (t < (durationMs * 1000)) {
-             P1_2_HIGH();
-             delay32Us(0, note / 2);
+        while (t < (durationMs * 1000u)) {
+            P1_2_HIGH();
+            delay32Us(0u, note / 2u);
 
-             P1_2_LOW();
-             delay32Us(0, note / 2);
+            P1_2_LOW();
+            delay32Us(0u, note / 2u);
 
-             t += note;
-         }
+            t += note;
+        }
 
-     }
-     else {
-         delay32Ms(0, durationMs);
-     }
- }
+    }
+    else {
+        delay32Ms(0, durationMs);
+    }
+}
 
 /**
  * @brief Odtwarza dźwięk w zależności od długości przytrzymania przycisku.
@@ -104,15 +104,15 @@
  * @side effects: brak
  */
 
- static void playNoteForHold(int hold) {
-    if (hold > 3) {
+static void playNoteForHold(uint32_t hold) {
+    if (hold > 3u) {
         // nuta A, 440 Hz, 200 ms trwania
         playNote(2272, 200);
     } else {
         // nuta C, 262 Hz, 200 ms trwania
         playNote(3816, 200);
     }
- }
+}
 
 /**
 * @brief Ustawia diody LED w zależności od długości przytrzymania.
@@ -125,103 +125,103 @@
 *
 * @side effects: brak
 */
- static void ledLineSet(int hold){
-     // 11111111 przesuniete o maks ledow - hold
-     if ((hold * 3) < 8){
-         pca9532_setLeds(255U >> (8U - (hold * 3U)), 0xffff);
-     } else {
-         pca9532_setLeds(255, 0xffff);
-     }
+static void ledLineSet(uint32_t hold){
+    // 11111111 przesuniete o maks ledow - hold
+    if ((hold * 3u) < 8u){
+        pca9532_setLeds(255U >> (sss8U - (hold * 3U)), 0xffff);
+    } else {
+        pca9532_setLeds(255, 0xffff);
+    }
 
-     if (hold > 2) {
-         pca9532_setLeds(255UL << 8, 0);
-     }
- }
+    if (hold > 2u) {
+        pca9532_setLeds(255UL << 8, 0);
+    }
+}
 
 
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main (void) {
-     uint8_t joy = 0;
-     unsigned int code[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-     int number = 0;
+    uint8_t joy = 0;
+    unsigned int code[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int number = 0;
 
 
-     int8_t xoff = 0;
-     int8_t yoff = 0;
-     int8_t zoff = 0;
+    int8_t xoff = 0;
+    int8_t yoff = 0;
+    int8_t zoff = 0;
 
-     int8_t x = 0;
-     int8_t y = 0;
-     int8_t z = 0;
+    int8_t x = 0;
+    int8_t y = 0;
+    int8_t z = 0;
 
-     uint8_t btn1 = 0;
+    uint8_t btn1 = 0;
 
-     GPIOInit();
-     // init do 3-color leda
-     GPIOSetDir( PORT1, 9, 1 );
-     GPIOSetDir( PORT1, 10, 1 );
+    GPIOInit();
+    // init do 3-color leda
+    GPIOSetDir( PORT1, 9, 1 );
+    GPIOSetDir( PORT1, 10, 1 );
 
-     LPC_SYSCON->SYSAHBCLKCTRL |= (1UL<<10); // init timer 32 bit nr 1
-     LPC_SYSCON->SYSAHBCLKCTRL |= (1UL<<9);
+    LPC_SYSCON->SYSAHBCLKCTRL |= (1UL<<10); // init timer 32 bit nr 1
+    LPC_SYSCON->SYSAHBCLKCTRL |= (1UL<<9);
 
-     I2CInit( (uint32_t)I2CMASTER, 0 );
-     // init do SSP (potrzebne w trybie SPI do OLED)
-     SSPInit();
-     // init do ADC, potencjometr
-     ADCInit( ADC_CLK );
+    I2CInit( (uint32_t)I2CMASTER, 0 );
+    // init do SSP (potrzebne w trybie SPI do OLED)
+    SSPInit();
+    // init do ADC, potencjometr
+    ADCInit( ADC_CLK );
 
-     // init do PCA9532, polaczony z 16 ledami
-     pca9532_init();
-     // init do joysticka (GPIO)
-     joystick_init();
-     // init do akcelerometru
-     acc_init();
-     // init do oleda, dziala tylko po inicjacji SSP w trybie SPI
-     oled_init();
-     // init do leda rgb (GPIO)
-     rgb_init();
-
-
-     /*
-      * Assume base board in zero-g position when reading first value.
-      */
-     acc_read(&x, &y, &z);
-     xoff = -x;
-     yoff = -y;
-     zoff = 64-z;
+    // init do PCA9532, polaczony z 16 ledami
+    pca9532_init();
+    // init do joysticka (GPIO)
+    joystick_init();
+    // init do akcelerometru
+    acc_init();
+    // init do oleda, dziala tylko po inicjacji SSP w trybie SPI
+    oled_init();
+    // init do leda rgb (GPIO)
+    rgb_init();
 
 
-     /* ---- Speaker ------> */
+    /*
+     * Assume base board in zero-g position when reading first value.
+     */
+    acc_read(&x, &y, &z);
+    xoff = -x;
+    yoff = -y;
+    zoff = 64-z;
 
-     GPIOSetDir( PORT3, 0, 1 );
-     GPIOSetDir( PORT3, 1, 1 );
-     GPIOSetDir( PORT3, 2, 1 );
-     GPIOSetDir( PORT1, 2, 1 );
 
-     LPC_IOCON->JTAG_nTRST_PIO1_2 = (LPC_IOCON->JTAG_nTRST_PIO1_2 & ~0x7) | 0x01;
+    /* ---- Speaker ------> */
 
-     GPIOSetValue( PORT3, 0, 0 );  //LM4811-clk
-     GPIOSetValue( PORT3, 1, 0 );  //LM4811-up/dn
-     GPIOSetValue( PORT3, 2, 0 );  //LM4811-shutdn
+    GPIOSetDir( PORT3, 0, 1 );
+    GPIOSetDir( PORT3, 1, 1 );
+    GPIOSetDir( PORT3, 2, 1 );
+    GPIOSetDir( PORT1, 2, 1 );
 
-     /* <---- Speaker ------ */
+    LPC_IOCON->JTAG_nTRST_PIO1_2 = (LPC_IOCON->JTAG_nTRST_PIO1_2 & ~0x7) | 0x01;
 
-     GPIOSetDir(PORT0, 1, 0);
-     LPC_IOCON->PIO0_1 &= ~0x7;
+    GPIOSetValue( PORT3, 0, 0 );  //LM4811-clk
+    GPIOSetValue( PORT3, 1, 0 );  //LM4811-up/dn
+    GPIOSetValue( PORT3, 2, 0 );  //LM4811-shutdn
 
-     pca9532_setLeds(0, 0xffff);
-     oled_clearScreen(OLED_COLOR_BLACK);
+    /* <---- Speaker ------ */
 
-     int row = 1;
-     int colCode = 1;
-     int colChar = 1;
-     int hold = 0;
-     int print = 0;
+    GPIOSetDir(PORT0, 1, 0);
+    LPC_IOCON->PIO0_1 &= ~0x7;
 
-     int adc_value = (((ADCRead(0) - 38) * 10) / 49) + 50;
+    pca9532_setLeds(0, 0xffff);
+    oled_clearScreen(OLED_COLOR_BLACK);
 
-     while (1) {
+    int row = 1;
+    int colCode = 1;
+    int colChar = 1;
+    uint32_t hold = 0;
+    int print = 0;
+
+    int adc_value = (((ADCRead(0) - 38) * 10) / 49) + 50;
+
+    while (1) {
 
         //odczytywanie rotacji
         acc_read(&x, &y, &z);
@@ -246,51 +246,51 @@ int main (void) {
         btn1 = GPIOGetValue(PORT0, 1);
 
 
-         if (btn1 == 0) {
+        if (btn1 == 0u) {
             hold++;
-            if (hold > 3){
+            if (hold > 3u){
                 rgb_setLeds(5);
             }
             else{
                 rgb_setLeds(4);
             }
-             print = 1;
-         }
-         else {
+            print = 1;
+        }
+        else {
 
             rgb_setLeds(7);
 
             if(print > 0){
 
-                if(hold > 2) {
-                    oled_putString(colCode, row,  (uint8_t*)"-", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
-                    code[number] = (code[number] * 10) + 2;
-                 }
-                 else{
-                    oled_putString(colCode, row,  (uint8_t*)"*", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
-                    code[number] = (code[number] * 10) + 1;
-                 }
+                if(hold > 2u) {
+                    oled_putString(colCode, row,  (const uint8_t*)"-", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+                    code[number] = (code[number] * 10u) + 2u;
+                }
+                else{
+                    oled_putString(colCode, row,  (const uint8_t*)"*", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+                    code[number] = (code[number] * 10u) + 1u;
+                }
 
                 playNoteForHold(hold);
 
                 colCode = colCode + 7;
-                 if (colCode > 90){
-                     row = row + 15;
-                     colCode = 1;
-                     if(row > 50){
-                         row = 1;
-                         colCode = 1;
-                         oled_clearScreen(OLED_COLOR_BLACK);
-                     }
-                 }
+                if (colCode > 90){
+                    row = row + 15;
+                    colCode = 1;
+                    if(row > 50){
+                        row = 1;
+                        colCode = 1;
+                        oled_clearScreen(OLED_COLOR_BLACK);
+                    }
+                }
                 hold = 0;
                 print = 0;
             }
-         }
+        }
 
 
-        if(code[number]>223) {
-            oled_putString(colCode, row,  (uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+        if(code[number]>223u) {
+            oled_putString(colCode, row,  (const uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
             colCode = colCode + 7;
             if(colCode > 90){
                 row = row+15;
@@ -305,35 +305,35 @@ int main (void) {
         }
 
 
-         joy = joystick_read();
+        joy = joystick_read();
 
-         if ((joy & JOYSTICK_DOWN) != 0) {
-             colChar = 1;
-             for(int i=0; i<=number; i++){
-                 for(int j=0; j<24; j++){	//24 to liczba elementów w tabelce morseCodeTable bo nie wiem czy jest tutaj fukcja length albo coś takiego
-                     if(code[i]==morseCodeTable[j]){
-                         oled_putChar(colChar, 40, (uint8_t)morseTranslationTable[j], OLED_COLOR_WHITE, OLED_COLOR_BLACK);
-                         break;
-                     }
-                 }
-                 colChar = colChar + 7;
+        if ((joy & JOYSTICK_DOWN) != 0u) {
+            colChar = 1;
+            for(int i=0; i<=number; i++){
+                for(int j=0; j<24; j++){	//24 to liczba elementów w tabelce morseCodeTable bo nie wiem czy jest tutaj fukcja length albo coś takiego
+                    if(code[i]==morseCodeTable[j]){
+                        oled_putChar(colChar, 40, (const uint8_t)morseTranslationTable[j], OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+                        break;
+                    }
+                }
+                colChar = colChar + 7;
 
-             }
-         }
+            }
+        }
 
-         if ((joy & JOYSTICK_RIGHT) != 0) {
-             oled_putString(colCode, row,  (uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
-             number ++;
-             colCode = colCode+7;
-         }
+        if ((joy & JOYSTICK_RIGHT) != 0u) {
+            oled_putString(colCode, row,  (const uint8_t*)"/", OLED_COLOR_WHITE, OLED_COLOR_BLACK);
+            number ++;
+            colCode = colCode+7;
+        }
 
 
-         // na podstawie potencjometru zmien predkosc delayu miedzy iteracjami
-         adc_value = (((ADCRead(0) - 30) * 10) / 49) + 50;
+        // na podstawie potencjometru zmien predkosc delayu miedzy iteracjami
+        adc_value = (((ADCRead(0) - 30) * 10) / 49) + 50;
 
-         ledLineSet(hold);
+        ledLineSet(hold);
 
-         delay32Ms(1, adc_value);
+        delay32Ms(1, adc_value);
 
-     }
- }
+    }
+}
